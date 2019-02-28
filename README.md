@@ -19,13 +19,13 @@ It requires `setuptools`.
   python setup.py install
   ~~~
 
-  Please refer to (Alternate Installation)[https://docs.python.org/3/install/index.html#inst-alt-install] for alternative installation schemas.
+  Please refer to [Alternate Installation](https://docs.python.org/3/install/index.html#inst-alt-install) for alternative installation schemas.
 
 ## Example
 
-Suppose we want to package an extension `my_ext.cpp` using (boost-python)[https://www.boost.org/doc/libs/1_69_0/libs/python/doc/html/index.html].
+Suppose we want to package an extension `my_ext.cpp` using [boost-python](https://www.boost.org/doc/libs/1_69_0/libs/python/doc/html/index.html])
 The name of the library required for link editing depends on the system on which the installation is performed.
-boost_python, boost_python37, boost_python36-py36, ... are possible names, depending on the OS, the python version, ...
+boost_python, boost_python37, boost_python3-py36, ... are possible names, depending on the OS, the python version, ...
 By adding an autoconf script, the name of the library will be determined at the time of installation.
 
 ~~~python
@@ -44,7 +44,7 @@ setup(
     )],
     configure_ac="""
         AC_PREREQ([2.63])
-        AC_INIT([waouh], [1.0.0])
+        AC_INIT([my_ext], [1.0.0])
         AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 
         dnl Boost
@@ -71,4 +71,4 @@ A full example is provided at https://github.com/adelplanque/autotools-extension
 
 ## License
 
-(MIT License)[https://github.com/adelplanque/autotools-extension-example/blob/master/LICENSE]
+[MIT License](https://github.com/adelplanque/autotools-extension-example/blob/master/LICENSE)
