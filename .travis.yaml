@@ -11,3 +11,6 @@ install:
   - sudo apt-get install libboost-python-dev
   - ls -l /usr/bin/python3
   - ls -l /usr/lib/x86_64-linux-gnu/libboost_python*
+
+script:
+  - true
