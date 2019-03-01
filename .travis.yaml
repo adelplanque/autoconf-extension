@@ -13,4 +13,4 @@ install:
   - ls -l /usr/lib/x86_64-linux-gnu/libboost_python*
 
 script:
-  - true
+  - echo "toto"
