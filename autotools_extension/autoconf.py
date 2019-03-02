@@ -107,7 +107,10 @@ class build_ext(distutils_build_ext):
                 outfile.write(name)
             cmd = os.path.join("autoconf", 'config.status')
             os.system("%s --file=%s" % (cmd, tmp))
-            var = open(tmp, 'r').read()
+            var = open(tmp, 'r').read().strip()
+            if var == name:
+                print("WARNING: %s not found" % name)
+                var = ""
         except:
             try:
                 os.remove(tmp + '.in')
