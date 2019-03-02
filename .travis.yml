@@ -23,4 +23,5 @@ script:
   - git clone https://github.com/adelplanque/autotools-extension-example.git
   - cd autotools-extension-example
   - python setup.py install
+  - cat autoconf/config.log
   - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"
