@@ -24,4 +24,5 @@ script:
   - cd autotools-extension-example
   - python setup.py install
   - cat autoconf/config.log
+  - cat autoconf/aclocal.m4
   - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"
