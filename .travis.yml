@@ -2,6 +2,7 @@ language: python
 
 python:
   - "2.6"
+  - "3.5"
   - "3.6"
 
 install:
@@ -18,9 +19,8 @@ install:
 
 script:
   - python setup.py install
-  - ls -l `python -c "import sys; print('\n'.join(sys.path))" | grep site-packages`
   - cd ..
   - git clone https://github.com/adelplanque/autotools-extension-example.git
   - cd autotools-extension-example
   - python setup.py install
-  - python -c "import woauh"
+  - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"
