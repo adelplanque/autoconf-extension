@@ -12,11 +12,14 @@ install:
   - ls -l /usr/bin/python*
   - ls -l /usr/lib/x86_64-linux-gnu/libboost_python*
   - which python
-  - python -c "import sys; print(sys.path); print(sys.executable); print(sys.version)"
+  - python -c "import sys; for x in sys.path: print x";
+  - python -c "import sys; print(sys.executable); print(sys.version)"
+  - env | sort
 
 script:
   - python setup.py install
-  - cd ~
+  - ls -l `python -c "import sys; for x in sys.path: print x" | grep site-packages`
+  - cd ..
   - git clone https://github.com/adelplanque/autotools-extension-example.git
   - cd autotools-extension-example
   - python setup.py install
