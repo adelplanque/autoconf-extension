@@ -4,7 +4,7 @@ setup(
     name='autotools-extension',
     version='0.1',
     description='Use autotools to configure python extension build',
-    package=find_packages(),
+    packages=find_packages(),
     url='https://github.com/adelplanque/autotools-extension',
     license='MIT',
     classifiers=[
