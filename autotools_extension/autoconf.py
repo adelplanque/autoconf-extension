@@ -37,6 +37,8 @@ class autoconf(Command):
             return
         if not os.path.exists("autoconf"):
             os.makedirs("autoconf")
+        if not os.path.exists("autoconf/m4"):
+            os.makedirs("autoconf/m4")
         with open(os.path.join("autoconf", "configure.ac"), "w") as outfile:
             outfile.write(self.distribution.configure_ac)
         with open(os.path.join("autoconf", "Makefile.am"), "w") as outfile:
