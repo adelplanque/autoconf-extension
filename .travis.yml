@@ -6,7 +6,7 @@ python:
   - "3.6"
 
 install:
-  - sudo apt-get install libboost-python-dev libncurses-dev autoconf autoconf-archive automake pkg-config
+  - sudo apt-get install libncurses-dev autoconf autoconf-archive automake pkg-config
   - pwd
   - ls -l
   - ls -l ~
@@ -16,8 +16,15 @@ install:
   - python -c "import sys; print('\n'.join(sys.path))"
   - python -c "import sys; print(sys.executable); print(sys.version)"
   - env | sort
+  - cd ${TRAVIS_BUILD_DIR}/..
+  - wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.bz2
+  - tar -xjf boost_1_69_0.tar.bz2
+  - cd boost_1_69_0
+  - ./bootstrap.sh --with-libraries=python --prefix=${VIRTUAL_ENV}
+  - ./b2 install
 
 script:
+  - cd ${TRAVIS_BUILD_DIR}
   - python setup.py install
   - cd ${TRAVIS_BUILD_DIR}/..
   - git clone https://github.com/adelplanque/autotools-extension-example.git
