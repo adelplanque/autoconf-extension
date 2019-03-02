@@ -8,9 +8,11 @@ install:
   - sudo apt-get install libboost-python-dev libncurses-dev autoconf autoconf-archive automake
   - pwd
   - ls -l
+  - ls -l ~
   - ls -l /usr/bin/python*
   - ls -l /usr/lib/x86_64-linux-gnu/libboost_python*
   - which python
+  - python -c "import sys; print(sys.path); print(sys.executable); print(sys.version)"
 
 script:
   - python setup.py install
