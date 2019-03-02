@@ -1,10 +1,10 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='autotools-extension',
     version='0.1',
     description='Use autotools to configure python extension build',
-    packages=find_packages(),
+    packages=['autotools_extension'],
     url='https://github.com/adelplanque/autotools-extension',
     license='MIT',
     classifiers=[
