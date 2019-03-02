@@ -5,7 +5,7 @@ python:
   - "3.6"
 
 install:
-  - sudo apt-get install libboost-python-dev libncurses-dev autoconf autoconf-archive aclocal automake
+  - sudo apt-get install libboost-python-dev libncurses-dev autoconf autoconf-archive automake
   - pwd
   - ls -l
   - ls -l /usr/bin/python*
