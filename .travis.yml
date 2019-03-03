@@ -19,6 +19,7 @@ install:
   - wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.bz2
   - tar -xjf boost_1_69_0.tar.bz2
   - cd boost_1_69_0
+  - echo `python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_inc(True))"`
   - ./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${VIRTUAL_ENV}
     --includedir=`python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_inc(True))"`
   - ./b2
