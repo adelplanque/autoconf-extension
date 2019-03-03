@@ -20,7 +20,8 @@ install:
   - tar -xjf boost_1_69_0.tar.bz2
   - cd boost_1_69_0
   - ./bootstrap.sh --with-libraries=python --prefix=${VIRTUAL_ENV}
-  - ./b2 install > boost_build.log || cat boost_build.log && false
+  - ./b2
+  - ./b2 install
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
