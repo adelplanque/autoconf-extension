@@ -6,10 +6,22 @@ import tarfile
 import tempfile
 
 
+
+
 class autoconf(Command):
 
     description = "Run autoconf"
     user_options = []
+
+    configure_ac_tmpl = """
+    %s
+    AC_INIT([%s], [%s])
+    AC_CONFIG_MACRO_DIR([m4])
+    AM_INIT_AUTOMAKE([foreign -Wall -Werror])
+    %s
+    AC_CONFIG_FILES([Makefile])
+    AC_OUTPUT
+    """
 
     def initialize_options(self):
         pass
@@ -29,7 +41,26 @@ class autoconf(Command):
            or os.path.getmtime(ac_filename) > os.path.getmtime(filename):
             return False
         configure_ac = open(ac_filename, 'r').read()
-        return configure_ac == self.distribution.configure_ac
+        return configure_ac == self.create_configure_ac()
+
+    def create_configure_ac(self):
+        configure_ac = self.distribution.configure_ac
+        for name in ('AC_PREREQ', 'AC_INIT', 'AC_CONFIG_MACRO_DIR',
+                     'AM_INIT_AUTOMAKE', 'AC_CONFIG_FILES', 'AC_OUTPUT'):
+            if name in configure_ac:
+                raise DistutilsExecError(
+                    "Don't provide `%s` in configure_ac" % name)
+        autoconf_version = self.distribution.autoconf_version
+        if autoconf_version is not None:
+            prereq = "AC_PREREQ([%s])" % autoconf_version
+        else:
+            prereq = ""
+        return self.configure_ac_tmpl % (
+            prereq,
+            self.distribution.metadata.name or "foo",
+            self.distribution.metadata.version or "1",
+            configure_ac
+        )
 
     def run(self):
         if self.uptodate():
@@ -40,7 +71,7 @@ class autoconf(Command):
         if not os.path.exists("autoconf/m4"):
             os.makedirs("autoconf/m4")
         with open(os.path.join("autoconf", "configure.ac"), "w") as outfile:
-            outfile.write(self.distribution.configure_ac)
+            outfile.write(self.create_configure_ac())
         with open(os.path.join("autoconf", "Makefile.am"), "w") as outfile:
             outfile.write("print-dist-archives:\n\t@echo '$(DIST_ARCHIVES)'\n")
         res = os.system("cd autoconf; autoreconf -i")
@@ -217,6 +248,7 @@ class Distribution(distutils_distribution):
 
     def __init__(self, attrs=None):
         self.configure_ac = None
+        self.autoconf_version = None
         configure.user_options = attrs.pop('configure_options') or []
         distutils_distribution.__init__(self, attrs)
         self.cmdclass['autoconf'] = autoconf
