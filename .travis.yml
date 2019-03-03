@@ -21,7 +21,8 @@ install:
   - cd boost_1_69_0
   - echo `python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_inc(True))"`
   - ./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${VIRTUAL_ENV}
-    --includedir=`python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_inc(True))"`
+    --with-python-root=${VIRTUAL_ENV}
+  - cat project-config.jam
   - ./b2
   - ./b2 install > /dev/null
 
