@@ -141,6 +141,29 @@ class build_ext(distutils_build_ext):
                 libraries.append(lib)
         return libraries
 
+    def get_dirs_prefix(self, dirs, prefix):
+        """
+        Substitute autoconf variables in directory list.
+        """
+        new_dirs = []
+        for d in dirs:
+            if d[0] == '@' and d[-1] == '@':
+                var = self.get_autoconf_var(d)
+                for tok in var.split():
+                    if var.startswith(prefix):
+                        new_dirs.append(var[2:])
+            else:
+                new_dirs.append(d)
+        return new_dirs
+
+    def build_extension(self, ext):
+        """
+        Substitute autoconf variables before build extension.
+        """
+        ext.library_dirs = self.get_dirs_prefix(ext.library_dirs, '-L')
+        ext.include_dirs = self.get_dirs_prefix(ext.include_dirs, '-I')
+        distutils_build_ext.build_extension(self, ext)
+
 distutils.command.build_ext.build_ext = build_ext
 
 

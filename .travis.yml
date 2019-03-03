@@ -20,7 +20,7 @@ install:
   - tar -xjf boost_1_69_0.tar.bz2
   - cd boost_1_69_0
   - ./bootstrap.sh --with-libraries=python --prefix=${VIRTUAL_ENV}
-  - ./b2 install
+  - ./b2 install > boost_build.log || cat boost_build && false
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
@@ -28,7 +28,7 @@ script:
   - cd ${TRAVIS_BUILD_DIR}/..
   - git clone https://github.com/adelplanque/autotools-extension-example.git
   - cd autotools-extension-example
-  - python setup.py install
+  - python setup.py configure --with-boost ${VIRTUAL_ENV} install
   - cat autoconf/config.log
   - cat autoconf/aclocal.m4
   - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"
