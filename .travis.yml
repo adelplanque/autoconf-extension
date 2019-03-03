@@ -20,6 +20,7 @@ install:
   - tar -xjf boost_1_69_0.tar.bz2
   - cd boost_1_69_0
   - ./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${VIRTUAL_ENV}
+    --includedir=`python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_inc(True))"`
   - ./b2
   - ./b2 install > /dev/null
 
