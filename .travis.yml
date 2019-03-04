@@ -2,6 +2,7 @@ language: python
 
 python:
   - "2.6"
+  - "2.7"
   - "3.5"
   - "3.6"
 
@@ -38,4 +39,5 @@ script:
   - python setup.py configure --with-boost ${VIRTUAL_ENV} install
   - cat autoconf/config.log
   - cat autoconf/aclocal.m4
+  - "export LD_LABRARY_PATH=${VIRTUAL_ENV}/lib:$LD_LIBRARY_PATH"
   - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"
