@@ -31,8 +31,7 @@ install:
   - ./b2
   - ./b2 install > /dev/null
   - ls -l ${BOOST_PREFIX}/lib
-  - for f in ${BOOST_PREFIX}/lib/*.so ; do ldd $f ; done
-  - "export LD_LIBRARY_PATH=${BOOST_PREFIX}/lib:$LD_LIBRARY_PATH"
+  - for f in ${BOOST_PREFIX}/lib/*.so ; do echo $f ; ldd $f ; done
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
@@ -42,4 +41,4 @@ script:
   - cd autotools-extension-example
   - python setup.py configure --with-boost ${BOOST_PREFIX} install
   - cat autoconf/config.log
-  - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"
+  - "export LD_LIBRARY_PATH=${BOOST_PREFIX}/lib:$LD_LIBRARY_PATH && ( echo -e \"\n\" | python -c \"import waouh; waouh.waouh('Hello world')\" )"
