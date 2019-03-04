@@ -15,6 +15,7 @@ install:
   - which python
   - python -c "import sys; print('\n'.join(sys.path))"
   - python -c "import sys; print(sys.executable); print(sys.version)"
+  - "export LD_LIBRARY_PATH=${VIRTUAL_ENV}/lib:$LD_LIBRARY_PATH"
   - env | sort
   - cd ${TRAVIS_BUILD_DIR}/..
   - wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.bz2
@@ -39,5 +40,4 @@ script:
   - python setup.py configure --with-boost ${VIRTUAL_ENV} install
   - cat autoconf/config.log
   - cat autoconf/aclocal.m4
-  - "export LD_LABRARY_PATH=${VIRTUAL_ENV}/lib:$LD_LIBRARY_PATH"
   - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"
