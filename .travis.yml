@@ -27,6 +27,7 @@ install:
   - ./b2
   - ./b2 install > /dev/null
   - ls -l ${VIRTUAL_ENV}/lib
+  - for f in ${VIRTUAL_ENV}/lib/*.so ; do ldd $f ; done
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
