@@ -8,6 +8,9 @@ python:
   - "3.5"
   - "3.6"
 
+env:
+  - BOOST_PREFIX=$HOME/local LD_LIBRARY_PATH=$BOOST_PREFIX/lib:$LD_LIBRARY_PATH
+
 install:
   - sudo apt-get install libncurses-dev autoconf autoconf-archive automake pkg-config
   - pwd
@@ -24,7 +27,6 @@ install:
   - cd boost_1_69_0
   - PY_INCLUDE=$(python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_inc(True))")
   - echo $PY_INCLUDE
-  - BOOST_PREFIX=${HOME}/local
   - "./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${BOOST_PREFIX}
     --with-python-root=\"${VIRTUAL_ENV} : ${PY_INCLUDE}\""
   - cat project-config.jam
@@ -41,4 +43,4 @@ script:
   - cd autotools-extension-example
   - python setup.py configure --with-boost ${BOOST_PREFIX} install
   - cat autoconf/config.log
-  - "export LD_LIBRARY_PATH=${BOOST_PREFIX}/lib:$LD_LIBRARY_PATH && ( echo -e \"\n\" | python -c \"import waouh; waouh.waouh('Hello world')\" )"
+  - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"
