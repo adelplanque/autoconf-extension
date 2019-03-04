@@ -3,6 +3,8 @@ language: python
 python:
   - "2.6"
   - "2.7"
+  - "3.3"
+  - "3.4"
   - "3.5"
   - "3.6"
 
@@ -15,7 +17,6 @@ install:
   - which python
   - python -c "import sys; print('\n'.join(sys.path))"
   - python -c "import sys; print(sys.executable); print(sys.version)"
-  - "export LD_LIBRARY_PATH=${VIRTUAL_ENV}/lib:$LD_LIBRARY_PATH"
   - env | sort
   - cd ${TRAVIS_BUILD_DIR}/..
   - wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.bz2
@@ -23,13 +24,15 @@ install:
   - cd boost_1_69_0
   - PY_INCLUDE=$(python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_inc(True))")
   - echo $PY_INCLUDE
-  - "./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${VIRTUAL_ENV}
-    --with-python-root=\"${VIRTUAL_ENV} : ${PY_INCLUDE}\""
+  - BOOST_PREFIX=${HOME}/local
+  - "./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${BOOST_ROOT}
+    --with-python-root=\"${BOOST_ROOT} : ${PY_INCLUDE}\""
   - cat project-config.jam
   - ./b2
   - ./b2 install > /dev/null
-  - ls -l ${VIRTUAL_ENV}/lib
-  - for f in ${VIRTUAL_ENV}/lib/*.so ; do ldd $f ; done
+  - ls -l ${BOOST_ROOT}/lib
+  - for f in ${BOOST_ROOT}/lib/*.so ; do ldd $f ; done
+  - "export LD_LIBRARY_PATH=${BOOST_ROOT}/lib:$LD_LIBRARY_PATH"
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
@@ -37,7 +40,6 @@ script:
   - cd ${TRAVIS_BUILD_DIR}/..
   - git clone https://github.com/adelplanque/autotools-extension-example.git
   - cd autotools-extension-example
-  - python setup.py configure --with-boost ${VIRTUAL_ENV} install
+  - python setup.py configure --with-boost ${BOOST_ROOT} install
   - cat autoconf/config.log
-  - cat autoconf/aclocal.m4
   - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"

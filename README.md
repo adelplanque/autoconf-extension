@@ -43,9 +43,8 @@ setup(
         libraries=['@BOOST_PYTHON_LIB@']
     )],
     configure_ac="""
-        AC_PREREQ([2.63])
-        AC_INIT([my_ext], [1.0.0])
-        AM_INIT_AUTOMAKE([foreign -Wall -Werror])
+        dnl Check for python
+        AX_PYTHON_DEVEL
 
         dnl Boost
         AX_BOOST_BASE([1.41], [],
@@ -54,17 +53,20 @@ setup(
 
         dnl Boost Python
         AX_BOOST_PYTHON
-        if test "$ac_cv_boost_python" != "yes"; then
+        if test "x$ac_cv_boost_python" != "xyes" -o "x$BOOST_PYTHON_LIB" == "x"; then
             AC_MSG_ERROR([Boost Python needed])
         fi
-
-        AC_CONFIG_FILES([Makefile])
-        AC_OUTPUT
     """,
     configure_options = [
         ('with-boost=', None, "Boost install prefix"),
     ],
 )
+~~~
+
+`configure_options` are thrown to configure script, so you can specify custom boost location by:
+
+~~~bash
+python setup.py configure --with-boost /path/to/boost install
 ~~~
 
 A full example is provided at https://github.com/adelplanque/autotools-extension-example

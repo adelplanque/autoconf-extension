@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from distutils.core import Command
 from distutils.errors import DistutilsExecError
 import os
@@ -6,9 +7,10 @@ import tarfile
 import tempfile
 
 
-
-
 class autoconf(Command):
+    """
+    Command that run autoconf.
+    """
 
     description = "Run autoconf"
     user_options = []
@@ -44,6 +46,9 @@ class autoconf(Command):
         return configure_ac == self.create_configure_ac()
 
     def create_configure_ac(self):
+        """
+        Create the `configure.ac` script from the configure_ac setup variable.
+        """
         configure_ac = self.distribution.configure_ac
         for name in ('AC_PREREQ', 'AC_INIT', 'AC_CONFIG_MACRO_DIR',
                      'AM_INIT_AUTOMAKE', 'AC_CONFIG_FILES', 'AC_OUTPUT'):
@@ -81,6 +86,9 @@ class autoconf(Command):
 
 
 class configure(Command):
+    """
+    Command that run configure script.
+    """
 
     description = "Run configure"
 
@@ -128,12 +136,25 @@ distutils_build_ext = distutils.command.build_ext.build_ext
 
 
 class build_ext(distutils_build_ext):
+    """
+    Subclass distutils build_ext command in order to substitute autoconf
+    variable by system values.
+    """
 
     def run(self):
         self.run_command('configure')
         distutils_build_ext.run(self)
 
     def get_autoconf_var(self, name):
+        """
+        Get value for an autoconf variable.
+
+        Args:
+            name (str): Variable name including @ surrounding
+
+        Returns:
+            System value for this variable.
+        """
         tmp = tempfile.mktemp()
         try:
             with open(tmp + '.in', 'w') as outfile:
@@ -156,54 +177,52 @@ class build_ext(distutils_build_ext):
             raise
         return var
 
-    def get_libraries(self, ext):
-        libraries = []
-        for lib in distutils_build_ext.get_libraries(self, ext):
-            if lib[0] == '@' and lib[-1] == '@':
-                var = self.get_autoconf_var(lib)
-                for tok in var.split():
-                    if tok.startswith('-l'):
-                        libraries.append(tok[2:])
-                    elif tok.startswith('-L'):
-                        pass
-                    else:
-                        libraries.append(tok)
-            else:
-                libraries.append(lib)
-        return libraries
+    def get_substituted_list(self, toks, prefix):
+        """
+        Substitute autoconf variables in a list.
 
-    def get_dirs_prefix(self, dirs, prefix):
+        Args:
+            l (list): Liste mixing string and autoconf variable
+                      (with @ surrounding)
+            prefix (str): prefix to filter configure values
+
+        Returns:
+            List of system values
         """
-        Substitute autoconf variables in directory list.
-        """
-        new_dirs = []
-        for d in dirs:
-            if d[0] == '@' and d[-1] == '@':
-                var = self.get_autoconf_var(d)
-                for tok in var.split():
-                    if var.startswith(prefix):
-                        new_dirs.append(var[2:])
+        new_toks = []
+        n = len(prefix)
+        for tok in toks:
+            if tok[0] == '@' and tok[-1] == '@':
+                for item in self.get_autoconf_var(tok).split():
+                    if item.startswith(prefix):
+                        new_toks.append(item[n:])
             else:
-                new_dirs.append(d)
-        return new_dirs
+                new_toks.append(tok)
+        return new_toks
 
     def build_extension(self, ext):
         """
-        Substitute autoconf variables before build extension.
+        Override in order to substitute autoconf variables just before build.
         """
-        ext.library_dirs = self.get_dirs_prefix(ext.library_dirs, '-L')
-        ext.include_dirs = self.get_dirs_prefix(ext.include_dirs, '-I')
+        ext.libraries = self.get_substituted_list(ext.libraries, '-l')
+        ext.library_dirs = self.get_substituted_list(ext.library_dirs, '-L')
+        ext.include_dirs = self.get_substituted_list(ext.include_dirs, '-I')
+        ext.runtime_library_dirs = \
+            self.get_substituted_list(ext.runtime_library_dirs, '-L')
         distutils_build_ext.build_extension(self, ext)
 
 distutils.command.build_ext.build_ext = build_ext
 
 
-# Override sdist command to include configure script in source distribution
 import distutils.command.sdist
 distutils_sdist = distutils.command.sdist.sdist
 
 
 class sdist(distutils.command.sdist.sdist):
+    """
+    Subclass distutils sdist command in order to include configure script in
+    source distribution.
+    """
 
     def make_release_tree(self, base_dir, files):
         """
@@ -240,7 +259,6 @@ distutils.command.sdist.sdist = sdist
 
 
 import distutils.dist
-
 distutils_distribution = distutils.dist.Distribution
 
 
