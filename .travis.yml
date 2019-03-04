@@ -26,7 +26,7 @@ install:
   - echo $PY_INCLUDE
   - BOOST_PREFIX=${HOME}/local
   - "./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${BOOST_PREFIX}
-    --with-python-root=\"${BOOST_PREFIX} : ${PY_INCLUDE}\""
+    --with-python-root=\"${VIRTUAL_ENV} : ${PY_INCLUDE}\""
   - cat project-config.jam
   - ./b2
   - ./b2 install > /dev/null
