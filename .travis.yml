@@ -25,14 +25,14 @@ install:
   - PY_INCLUDE=$(python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_inc(True))")
   - echo $PY_INCLUDE
   - BOOST_PREFIX=${HOME}/local
-  - "./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${BOOST_ROOT}
-    --with-python-root=\"${BOOST_ROOT} : ${PY_INCLUDE}\""
+  - "./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${BOOST_PREFIX}
+    --with-python-root=\"${BOOST_PREFIX} : ${PY_INCLUDE}\""
   - cat project-config.jam
   - ./b2
   - ./b2 install > /dev/null
-  - ls -l ${BOOST_ROOT}/lib
-  - for f in ${BOOST_ROOT}/lib/*.so ; do ldd $f ; done
-  - "export LD_LIBRARY_PATH=${BOOST_ROOT}/lib:$LD_LIBRARY_PATH"
+  - ls -l ${BOOST_PREFIX}/lib
+  - for f in ${BOOST_PREFIX}/lib/*.so ; do ldd $f ; done
+  - "export LD_LIBRARY_PATH=${BOOST_PREFIX}/lib:$LD_LIBRARY_PATH"
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
@@ -40,6 +40,6 @@ script:
   - cd ${TRAVIS_BUILD_DIR}/..
   - git clone https://github.com/adelplanque/autotools-extension-example.git
   - cd autotools-extension-example
-  - python setup.py configure --with-boost ${BOOST_ROOT} install
+  - python setup.py configure --with-boost ${BOOST_PREFIX} install
   - cat autoconf/config.log
   - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"

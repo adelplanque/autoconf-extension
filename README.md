@@ -19,7 +19,13 @@ It requires `setuptools`.
   python setup.py install
   ~~~
 
-  Please refer to [Alternate Installation](https://docs.python.org/3/install/index.html#inst-alt-install) for alternative installation schemas.
+* From pip:
+
+  ~~~bash
+  pip install autotools-extension
+  ~~~
+
+Please refer to [alternate installation](https://docs.python.org/3/install/index.html#inst-alt-install) for alternative installation schema.
 
 ## Example
 
