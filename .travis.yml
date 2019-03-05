@@ -18,6 +18,7 @@ install:
   - python -c "import sys; print('\n'.join(sys.path))"
   - python -c "import sys; print(sys.executable); print(sys.version)"
   - env | sort
+  - "export LD_LIBRARY_PATH=${VIRTUAL_ENV}/lib:$LD_LIBRARY_PATH"
   - cd ${TRAVIS_BUILD_DIR}/..
   - wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.bz2
   - tar -xjf boost_1_69_0.tar.bz2
