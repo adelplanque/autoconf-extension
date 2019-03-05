@@ -8,6 +8,13 @@ python:
   - "3.5"
   - "3.6"
 
+env:
+  - PREFIX=$HOME/local LD_LIBRARY_PATH=${PREFIX}/lib:$LD_LIBRARY_PATH"
+
+cache:
+  directories:
+  - $PREFIX
+
 install:
   - sudo apt-get install libncurses-dev autoconf autoconf-archive automake pkg-config
   - pwd
@@ -18,20 +25,21 @@ install:
   - python -c "import sys; print('\n'.join(sys.path))"
   - python -c "import sys; print(sys.executable); print(sys.version)"
   - env | sort
-  - "export LD_LIBRARY_PATH=${VIRTUAL_ENV}/lib:$LD_LIBRARY_PATH"
-  - cd ${TRAVIS_BUILD_DIR}/..
-  - wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.bz2
-  - tar -xjf boost_1_69_0.tar.bz2
-  - cd boost_1_69_0
-  - PY_INCLUDE=$(python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_inc(True))")
-  - echo $PY_INCLUDE
-  - "./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${VIRTUAL_ENV}
-    --with-python-root=\"${VIRTUAL_ENV} : ${PY_INCLUDE}\""
-  - cat project-config.jam
-  - ./b2
-  - ./b2 install > /dev/null
-  - ls -l ${VIRTUAL_ENV}/lib
-  - for f in ${VIRTUAL_ENV}/lib/*.so ; do echo $f ; ldd $f ; done
+  - "if [ ! -d $PREFIX -a `find $PREFIX -name \"libboost_python*.so\" | wc -l` == 0 ]] ; then
+    cd ${TRAVIS_BUILD_DIR}/.. ;
+    wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.bz2 ;
+    tar -xjf boost_1_69_0.tar.bz2 ;
+    cd boost_1_69_0 ;
+    PY_INCLUDE=$(python -c \"import distutils.sysconfig; print(distutils.sysconfig.get_python_inc(True))\") ;
+    echo $PY_INCLUDE ;
+    ./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${PREFIX}
+      --with-python-root=\"${VIRTUAL_ENV} : ${PY_INCLUDE}\" ;
+    cat project-config.jam ;
+    ./b2 ;
+    ./b2 install > /dev/null ;
+    fi"
+  - ls -l ${PREFIX}/lib
+  - for f in ${PREFIX}/lib/*.so ; do echo $f ; ldd $f ; done
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
@@ -41,4 +49,5 @@ script:
   - cd autotools-extension-example
   - python setup.py configure --with-boost ${VIRTUAL_ENV} install
   - cat autoconf/config.log
+  - for l in `find -name "*.so"` ; do echo $f ; ldd $f ; done
   - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"
