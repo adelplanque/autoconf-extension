@@ -8,9 +8,6 @@ python:
   - "3.5"
   - "3.6"
 
-env:
-  - BOOST_PREFIX=$HOME/local LD_LIBRARY_PATH=$BOOST_PREFIX/lib:$LD_LIBRARY_PATH
-
 install:
   - sudo apt-get install libncurses-dev autoconf autoconf-archive automake pkg-config
   - pwd
@@ -27,13 +24,13 @@ install:
   - cd boost_1_69_0
   - PY_INCLUDE=$(python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_inc(True))")
   - echo $PY_INCLUDE
-  - "./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${BOOST_PREFIX}
+  - "./bootstrap.sh --with-python=`which python` --with-libraries=python --prefix=${VIRTUAL_ENV}
     --with-python-root=\"${VIRTUAL_ENV} : ${PY_INCLUDE}\""
   - cat project-config.jam
   - ./b2
   - ./b2 install > /dev/null
-  - ls -l ${BOOST_PREFIX}/lib
-  - for f in ${BOOST_PREFIX}/lib/*.so ; do echo $f ; ldd $f ; done
+  - ls -l ${VIRTUAL_ENV}/lib
+  - for f in ${VIRTUAL_ENV}/lib/*.so ; do echo $f ; ldd $f ; done
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
@@ -41,6 +38,6 @@ script:
   - cd ${TRAVIS_BUILD_DIR}/..
   - git clone https://github.com/adelplanque/autotools-extension-example.git
   - cd autotools-extension-example
-  - python setup.py configure --with-boost ${BOOST_PREFIX} install
+  - python setup.py configure --with-boost ${VIRTUAL_ENV} install
   - cat autoconf/config.log
   - echo -e "\n" | python -c "import waouh; waouh.waouh('Hello world')"
